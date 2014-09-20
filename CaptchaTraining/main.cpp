@@ -6,8 +6,8 @@
 map<char,int> char2int;
 map<int,char> int2char;
 
-void ReadFiles(vector<Mat> &output,vector<int> &classId,int &n){
-    n=0; int m=0; char p;
+void ReadFiles(vector<Mat> &output,vector<int> &classId,int &n,int &m){
+    n=0; m=0; char p;
     ifstream ifs("list.txt");
     string path;
     char flag;
@@ -37,14 +37,18 @@ void ReadFiles(vector<Mat> &output,vector<int> &classId,int &n){
 
 int main(){
     vector<Mat> input; vector<int> classId;
-    int n;
-    ReadFiles(input,classId,n);
-    /*int i=input.size()-1;
-    //for(int i=0;i<50;i++){
-        cout<<classId[i]<<" "<<int2char[classId[i]]<<endl;
-        imshow("output",input[i]);
-        waitKey();
-    //}
-    */
+    int n,m;
+    ReadFiles(input,classId,n,m);
+
+    Mat input_data(n,901,CV_64F);
+    LoadData(input_data,input);
+
+    NN neuralnet(900,100,m);
+    neuralnet.setTrainingData(input_data,classId);
+    neuralnet.train(500);
+    neuralnet.saveWeights("./weights.txt");
+
+    saveDict("dict.txt",int2char);
+
     return 0;
 }
