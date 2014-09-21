@@ -25,5 +25,6 @@ LIBS += /usr/local/lib/libopencv_calib3d.so \
 SOURCES += main.cpp
 
 HEADERS += \
-    funclib.hpp
+    ../funclib.hpp \
+    ../NN.hpp
 

@@ -1,25 +1,23 @@
-#include <fstream>
-#include <map>
-
-#include "funclib.hpp"
+#include "../funclib.hpp"
+#include "../NN.hpp"
 
 map<char,int> char2int;
 map<int,char> int2char;
+char flag;
 
-void ReadFiles(vector<Mat> &output,vector<int> &classId,int &n,int &m){
+void ReadFiles(const string &filename,vector<Mat> &output,vector<int> &classId,int &n,int &m){
     n=0; m=0; char p;
-    ifstream ifs("list.txt");
+    ifstream ifs(filename);
     string path;
-    char flag;
     Mat image;
+    ifs>>path;
     while(ifs){
-        ifs>>path;
-        image=imread("./pic/"+path);
+        image=imread("../pic/"+path);
         output.push_back(image);
         n++;
         p=path[path.size()-5];
         if(char2int[p]==0){
-            if(m==0){
+            if(flag=='\0'){
                 m++;
                 int2char[0]=p;
                 flag=p;
@@ -31,24 +29,35 @@ void ReadFiles(vector<Mat> &output,vector<int> &classId,int &n,int &m){
             }
         }
         classId.push_back(char2int[p]);
+        ifs>>path;
     }
     ifs.close();
 }
 
 int main(){
-    vector<Mat> input; vector<int> classId;
-    int n,m;
-    ReadFiles(input,classId,n,m);
 
-    Mat input_data(n,901,CV_64F);
-    LoadData(input_data,input);
+    vector<Mat> trainingset,validationset;
+    vector<int> trainingsetClassId,validationsetClassId;
+    int trainingsetSize,trainingsetClass;
+    int validationsetSize,validationsetClass;
 
-    NN neuralnet(900,100,m);
-    neuralnet.setTrainingData(input_data,classId);
-    neuralnet.train(500);
-    neuralnet.saveWeights("./weights.txt");
+    flag='\0';
+    ReadFiles("../trainingset.txt",trainingset,trainingsetClassId,trainingsetSize,trainingsetClass);
+    ReadFiles("../validationset.txt",validationset,validationsetClassId,validationsetSize,validationsetClass);
 
-    saveDict("dict.txt",int2char);
+    assert(0==validationsetClass);
+    // ensure all letters in the validation set appears in the training set
+
+    Mat training,validation;
+    loadMat(trainingset,training);
+    loadMat(validationset,validation);
+
+    NN neuralnet(lettersSize*lettersSize,100,trainingsetClass);
+
+    neuralnet.train(training,trainingsetClassId,validation,validationsetClassId,500);
+
+    neuralnet.saveWeights("../NNWeights.txt");
+    saveDict("../dict.txt",int2char);
 
     return 0;
 }

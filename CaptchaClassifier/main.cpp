@@ -1,33 +1,28 @@
-#include "funclib.hpp"
+#include "../funclib.hpp"
+#include "../NN.hpp"
 
 int main()
 {
-    Mat a=imread("/home/garzon/image.jpg"),b;
+    Mat a=imread("../image.jpg"),b;
     b=a.clone();
 
-    cvtColor(a,a,CV_BGR2GRAY);
-    threshold(a,a,128,255,THRESH_BINARY);
+    vector<Mat> letters;
+    preprocessing(a,lettersNum,Size(lettersSize,lettersSize),letters);
 
-    trim(a);
+    Mat input_data;
+    loadMat(letters,input_data);
 
-    vector<Mat> letters=segment(a);
-    Mat input_data(4,901,CV_64F);
-    LoadData(input_data,letters);
+    NN neuralnet("../NNWeights.txt");
 
-    NN neuralnet("./weights.txt"); Mat test;
     vector<int> result;
-    test=neuralnet.predict(input_data);
-    neuralnet.classify(test,result);
+    neuralnet.classify(input_data,result);
 
     map<int,char> dict;
-    loadDict("dict.txt",dict);
+    loadDict("../dict.txt",dict);
 
     for(auto a:result)
         cout<<dict[a];
     cout<<endl;
-
-    imshow("captcha",b);
-    waitKey();
 
     return 0;
 }

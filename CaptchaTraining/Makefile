@@ -415,7 +415,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/CaptchaTraining1.0.0 || mkdir -p .tmp/CaptchaTraining1.0.0
-	$(COPY_FILE) --parents $(DIST) .tmp/CaptchaTraining1.0.0/ && $(COPY_FILE) --parents funclib.hpp .tmp/CaptchaTraining1.0.0/ && $(COPY_FILE) --parents main.cpp .tmp/CaptchaTraining1.0.0/ && (cd `dirname .tmp/CaptchaTraining1.0.0` && $(TAR) CaptchaTraining1.0.0.tar CaptchaTraining1.0.0 && $(COMPRESS) CaptchaTraining1.0.0.tar) && $(MOVE) `dirname .tmp/CaptchaTraining1.0.0`/CaptchaTraining1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/CaptchaTraining1.0.0
+	$(COPY_FILE) --parents $(DIST) .tmp/CaptchaTraining1.0.0/ && $(COPY_FILE) --parents ../funclib.hpp ../NN.hpp .tmp/CaptchaTraining1.0.0/ && $(COPY_FILE) --parents main.cpp .tmp/CaptchaTraining1.0.0/ && (cd `dirname .tmp/CaptchaTraining1.0.0` && $(TAR) CaptchaTraining1.0.0.tar CaptchaTraining1.0.0 && $(COMPRESS) CaptchaTraining1.0.0.tar) && $(MOVE) `dirname .tmp/CaptchaTraining1.0.0`/CaptchaTraining1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/CaptchaTraining1.0.0
 
 
 clean:compiler_clean 
@@ -452,7 +452,7 @@ compiler_clean:
 
 ####### Compile
 
-main.o: main.cpp funclib.hpp \
+main.o: main.cpp ../funclib.hpp \
 		../../Qt5.3.1/5.3/gcc_64/include/QtCore/qstring.h \
 		../../Qt5.3.1/5.3/gcc_64/include/QtCore/qchar.h \
 		../../Qt5.3.1/5.3/gcc_64/include/QtCore/qglobal.h \
@@ -487,7 +487,8 @@ main.o: main.cpp funclib.hpp \
 		../../Qt5.3.1/5.3/gcc_64/include/QtCore/qrefcount.h \
 		../../Qt5.3.1/5.3/gcc_64/include/QtCore/qnamespace.h \
 		../../Qt5.3.1/5.3/gcc_64/include/QtCore/qarraydata.h \
-		../../Qt5.3.1/5.3/gcc_64/include/QtCore/qstringbuilder.h
+		../../Qt5.3.1/5.3/gcc_64/include/QtCore/qstringbuilder.h \
+		../NN.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 ####### Install

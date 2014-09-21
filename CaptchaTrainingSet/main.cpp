@@ -1,21 +1,20 @@
-#include "funclib.hpp"
+#include "../funclib.hpp"
+
+const double ratio=0.9;
 
 int main()
 {
-    QString path("./pic/%1%2.%3");
+    QString path("../pic/%1%2.%3");
     for(int i=0;i>-1;i++){
 
         Mat a=imread(path.arg(i).arg("").arg("jpg").toStdString());
         if(a.empty()) break;
 
-        cvtColor(a,a,CV_BGR2GRAY);
-        threshold(a,a,128,255,THRESH_BINARY);
-
-        trim(a);
+        vector<Mat> letters;
+        preprocessing(a,lettersNum,Size(lettersSize,lettersSize),letters);
 
         imshow("input",a);
 
-        vector<Mat> letters=segment(a);
         int j=-1;
         for(const auto &letter: letters){
             j++;
@@ -26,6 +25,31 @@ int main()
         }
         system(("rm "+path.arg(i).arg("").arg("jpg").toStdString()).c_str());
     }
+
+    system("ls ../pic > ../piclist.txt");
+
+    ifstream ifs("../piclist.txt");
+    vector<string> piclist; string filename;
+    ifs>>filename;
+    while(ifs){
+        piclist.push_back(filename);
+        ifs>>filename;
+    }
+    ifs.close();
+
+    ofstream ofs("../trainingset.txt");
+    int i;
+    for(i=0; (i*1.0/piclist.size() < ratio)&&(i<piclist.size()) ; i++){
+        ofs<<piclist[i]<<endl;
+    }
+    ofs.close();
+
+    ofs.open("../validationset.txt");
+    for(;i<piclist.size();i++){
+        ofs<<piclist[i]<<endl;
+    }
+    ofs.close();
+
     return 0;
 }
 
