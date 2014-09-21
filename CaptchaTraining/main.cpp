@@ -54,7 +54,7 @@ int main(){
 
     NN neuralnet(lettersSize*lettersSize,100,trainingsetClass);
 
-    neuralnet.train(training,trainingsetClassId,validation,validationsetClassId,500);
+    neuralnet.train(training,trainingsetClassId,validation,validationsetClassId,600);
 
     neuralnet.saveWeights("../NNWeights.txt");
     saveDict("../dict.txt",int2char);
